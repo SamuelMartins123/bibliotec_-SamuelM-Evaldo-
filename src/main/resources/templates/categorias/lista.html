@@ -1,13 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Categorias | BiblioTec</title>
+    <link rel="stylesheet" th:href="@{/css/categorias.css}">
 </head>
 <body>
 <h1>Categorias da biblioteca</h1>
+<a th:href="@{/categorias/nova}">+ Nova categoria</a>
 
 <table>
     <caption>Categorias cadastradas no BiblioTec</caption>
@@ -16,6 +17,7 @@
         <th>ID</th>
         <th>Nome</th>
         <th>Descrição</th>
+        <th>Ações</th>
     </tr>
     </thead>
     <tbody>
@@ -23,6 +25,16 @@
         <td th:text="${categoria.id}">1</td>
         <td th:text="${categoria.nome}">Literatura</td>
         <td th:text="${categoria.descricao}">Descrição</td>
+        <td>
+            <a th:href="@{/categorias/{id}/editar(id=${categoria.id})}">Editar</a>
+
+            <form th:action="@{/categorias/{id}/excluir(id=${categoria.id})}"
+                  method="post"
+                  style="display:inline"
+                  onsubmit="return confirm('Tem certeza que deseja excluir esta categoria?');">
+                <button type="submit">Excluir</button>
+            </form>
+        </td>
     </tr>
     </tbody>
 </table>

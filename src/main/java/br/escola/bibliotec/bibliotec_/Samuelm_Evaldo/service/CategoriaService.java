@@ -1,4 +1,3 @@
-
 package br.escola.bibliotec.bibliotec_.Samuelm_Evaldo.service;
 
 import br.escola.bibliotec.bibliotec_.Samuelm_Evaldo.model.Categoria;
@@ -6,6 +5,7 @@ import br.escola.bibliotec.bibliotec_.Samuelm_Evaldo.repository.CategoriaReposit
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoriaService {
@@ -19,4 +19,17 @@ public class CategoriaService {
     public List<Categoria> listarTodas() {
         return categoriaRepository.findAll();
     }
+
+    public Categoria salvar(Categoria categoria) {
+        return categoriaRepository.save(categoria);
+    }
+
+    public Optional<Categoria> buscarPorId(Long id) {
+        return categoriaRepository.findById(id);
+    }
+
+    public void excluir(Long id) {
+        categoriaRepository.deleteById(id);
+    }
+
 }
