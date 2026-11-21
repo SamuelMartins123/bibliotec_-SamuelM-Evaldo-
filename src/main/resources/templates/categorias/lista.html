@@ -7,11 +7,19 @@
     <link rel="stylesheet" th:href="@{/css/categorias.css}">
 </head>
 <body>
+
 <h1>Categorias da biblioteca</h1>
+
+<p th:if="${mensagem}"
+   th:text="${mensagem}"
+   class="mensagem">
+</p>
+
 <a th:href="@{/categorias/nova}">+ Nova categoria</a>
 
 <table>
     <caption>Categorias cadastradas no BiblioTec</caption>
+
     <thead>
     <tr>
         <th>ID</th>
@@ -20,23 +28,28 @@
         <th>Ações</th>
     </tr>
     </thead>
+
     <tbody>
     <tr th:each="categoria : ${categorias}">
         <td th:text="${categoria.id}">1</td>
         <td th:text="${categoria.nome}">Literatura</td>
         <td th:text="${categoria.descricao}">Descrição</td>
         <td>
-            <a th:href="@{/categorias/{id}/editar(id=${categoria.id})}">Editar</a>
+            <a th:href="@{/categorias/{id}/editar(id=${categoria.id})}">
+                Editar
+            </a>
 
             <form th:action="@{/categorias/{id}/excluir(id=${categoria.id})}"
                   method="post"
                   style="display:inline"
                   onsubmit="return confirm('Tem certeza que deseja excluir esta categoria?');">
+
                 <button type="submit">Excluir</button>
             </form>
         </td>
     </tr>
     </tbody>
 </table>
+
 </body>
 </html>

@@ -2,9 +2,12 @@ package br.escola.bibliotec.bibliotec_.Samuelm_Evaldo.controller.web;
 
 import br.escola.bibliotec.bibliotec_.Samuelm_Evaldo.model.Categoria;
 import br.escola.bibliotec.bibliotec_.Samuelm_Evaldo.service.CategoriaService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/categorias")
@@ -31,10 +34,44 @@ public class CategoriaController {
     }
 
     @PostMapping
-    public String salvar(@ModelAttribute Categoria categoria) {
+    public String salvar(
+            @Valid @ModelAttribute("categoria") Categoria categoria,
+            BindingResult resultado,
+            RedirectAttributes redirectAttributes) {
+
+        // Remove espaços antes de verificar o nome.
+        if (categoria.getNome() != null) {
+            categoria.setNome(categoria.getNome().trim());
+        }
+
+        // Verifica se o nome já está cadastrado.
+        if (!resultado.hasErrors()
+                && categoriaService.nomeJaExiste(categoria)) {
+
+            resultado.rejectValue(
+                    "nome",
+                    "nome.duplicado",
+                    "Já existe uma categoria com este nome"
+            );
+        }
+
+        // Se houver erros, retorna ao formulário.
+        if (resultado.hasErrors()) {
+            return "categorias/form";
+        }
+
+        // Salva a categoria.
         categoriaService.salvar(categoria);
+
+        // Mensagem de sucesso.
+        redirectAttributes.addFlashAttribute(
+                "mensagem",
+                "Categoria salva com sucesso!"
+        );
+
         return "redirect:/categorias";
     }
+
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id, Model model) {
         var categoria = categoriaService.buscarPorId(id);
@@ -44,13 +81,22 @@ public class CategoriaController {
         }
 
         model.addAttribute("categoria", categoria.get());
+
         return "categorias/form";
     }
 
-
     @PostMapping("/{id}/excluir")
-    public String excluir(@PathVariable Long id) {
+    public String excluir(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+
         categoriaService.excluir(id);
+
+        redirectAttributes.addFlashAttribute(
+                "mensagem",
+                "Categoria excluída."
+        );
+
         return "redirect:/categorias";
     }
 }

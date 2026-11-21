@@ -21,11 +21,21 @@ public class CategoriaService {
     }
 
     public Categoria salvar(Categoria categoria) {
+        categoria.setNome(categoria.getNome().trim());
         return categoriaRepository.save(categoria);
     }
 
     public Optional<Categoria> buscarPorId(Long id) {
         return categoriaRepository.findById(id);
+    }
+
+    public boolean nomeJaExiste(Categoria categoria) {
+
+        Optional<Categoria> existente =
+                categoriaRepository.findByNomeIgnoreCase(categoria.getNome().trim());
+
+        return existente.isPresent()
+                && !existente.get().getId().equals(categoria.getId());
     }
 
     public void excluir(Long id) {
