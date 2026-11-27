@@ -19,32 +19,40 @@ public class CategoriaController {
         this.categoriaService = categoriaService;
     }
 
+    // Listar categorias
     @GetMapping
     public String listar(Model model) {
-        model.addAttribute("categorias",
-                categoriaService.listarTodas());
+
+        model.addAttribute(
+                "categorias",
+                categoriaService.listarTodas()
+        );
 
         return "categorias/lista";
     }
 
+    // Abrir formulário de cadastro
     @GetMapping("/nova")
     public String nova(Model model) {
+
         model.addAttribute("categoria", new Categoria());
+
         return "categorias/form";
     }
 
+    // Salvar categoria
     @PostMapping
     public String salvar(
             @Valid @ModelAttribute("categoria") Categoria categoria,
             BindingResult resultado,
             RedirectAttributes redirectAttributes) {
 
-        // Remove espaços antes de verificar o nome.
+        // Remove espaços antes de verificar o nome
         if (categoria.getNome() != null) {
             categoria.setNome(categoria.getNome().trim());
         }
 
-        // Verifica se o nome já está cadastrado.
+        // Verifica se o nome já está cadastrado
         if (!resultado.hasErrors()
                 && categoriaService.nomeJaExiste(categoria)) {
 
@@ -55,15 +63,15 @@ public class CategoriaController {
             );
         }
 
-        // Se houver erros, retorna ao formulário.
+        // Se houver erros, retorna ao formulário
         if (resultado.hasErrors()) {
             return "categorias/form";
         }
 
-        // Salva a categoria.
+        // Salva a categoria
         categoriaService.salvar(categoria);
 
-        // Mensagem de sucesso.
+        // Mensagem de sucesso
         redirectAttributes.addFlashAttribute(
                 "mensagem",
                 "Categoria salva com sucesso!"
@@ -72,8 +80,10 @@ public class CategoriaController {
         return "redirect:/categorias";
     }
 
+    // Abrir formulário de edição
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id, Model model) {
+
         var categoria = categoriaService.buscarPorId(id);
 
         if (categoria.isEmpty()) {
@@ -85,17 +95,28 @@ public class CategoriaController {
         return "categorias/form";
     }
 
+    // Excluir categoria
     @PostMapping("/{id}/excluir")
     public String excluir(
             @PathVariable Long id,
             RedirectAttributes redirectAttributes) {
 
-        categoriaService.excluir(id);
+        boolean excluida = categoriaService.excluir(id);
 
-        redirectAttributes.addFlashAttribute(
-                "mensagem",
-                "Categoria excluída."
-        );
+        if (excluida) {
+
+            redirectAttributes.addFlashAttribute(
+                    "mensagem",
+                    "Categoria excluída com sucesso!"
+            );
+
+        } else {
+
+            redirectAttributes.addFlashAttribute(
+                    "mensagem",
+                    "Não é possível excluir esta categoria porque existem livros vinculados a ela."
+            );
+        }
 
         return "redirect:/categorias";
     }

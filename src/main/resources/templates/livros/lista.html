@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Livros cadastrados - BiblioTec</title>
+
+    <link rel="stylesheet" th:href="@{/css/categorias.css}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Livros cadastrados</h1>
+
+    <!-- Botões principais -->
+    <a th:href="@{/livros/novo}" class="botao">
+        Novo livro
+    </a>
+
+    <a th:href="@{/categorias}" class="botao">
+        Categorias
+    </a>
+
+    <!-- Mensagem de sucesso -->
+    <p th:if="${mensagem}" th:text="${mensagem}"></p>
+
+    <!-- Pesquisa de livros -->
+    <form th:action="@{/livros}" method="get">
+
+        <input type="text"
+               name="busca"
+               placeholder="Pesquisar pelo título..."
+               th:value="${busca}">
+
+        <button type="submit" class="botao">
+            Pesquisar
+        </button>
+
+        <a th:href="@{/livros}" class="botao">
+            Limpar
+        </a>
+
+    </form>
+
+    <!-- Tabela de livros -->
+    <table>
+
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>ISBN</th>
+            <th>Categoria</th>
+            <th>Disponíveis</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr th:each="livro : ${livros}">
+
+            <td th:text="${livro.id}"></td>
+
+            <td th:text="${livro.titulo}"></td>
+
+            <td th:text="${livro.autor}"></td>
+
+            <td th:text="${livro.isbn}"></td>
+
+            <td th:text="${livro.categoria.nome}"></td>
+
+            <td th:text="${livro.quantidadeDisponivel + ' de ' + livro.quantidadeTotal}"></td>
+
+            <!-- Botão de edição -->
+            <td>
+                <a th:href="@{/livros/{id}/editar(id=${livro.id})}"
+                   class="botao">
+                    Editar
+                </a>
+            </td>
+
+        </tr>
+
+        <!-- Mensagem quando nenhum livro for encontrado -->
+        <tr th:if="${#lists.isEmpty(livros)}">
+
+            <td colspan="7">
+                Nenhum livro encontrado.
+            </td>
+
+        </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+</body>
+</html>
